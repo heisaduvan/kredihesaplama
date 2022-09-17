@@ -1,14 +1,15 @@
-import {useContext, forwardRef, useEffect} from "react";
+import {useContext, forwardRef, useEffect, useState} from "react";
 import { CreditSummaryContext } from "../App";
 import "../App.css";
 
 const CreditSummary = (props,ref) => {
-  const summary = useContext(CreditSummaryContext);
-  
-  const handleClick = () => {
-    ref.current.calculateSummary();
-  }
-  let periodText = getPeriodText(summary);
+  const summary = useContext(CreditSummaryContext); //Kredi özet bilgileri içeren context.
+  const [periodText, setPeriodText] = useState(""); //Haftalık, Aylık, Yıllık bilgisi tutulur. Bu bilgiyi CreditCalculateForm component'inin getPeriodText methodu döner.
+
+  useEffect(() => {
+    setPeriodText(ref.current.getPeriodText(summary !== null ? summary.period : null));
+  })
+
   return (
     summary !== null && (
       <div>
@@ -32,21 +33,9 @@ const CreditSummary = (props,ref) => {
             </tr>
           </tbody>
         </table>
-        <button onClick={handleClick}>Tıkla</button>
       </div>
     )
   );
 };
 
-const getPeriodText = (summary) => {
-  let periods = {
-    7: "Haftalık",
-    30: "Aylık",
-    365: "Yıllık",
-  };
-
-  if (summary === null) return null;
-
-  return periods[summary.period];
-};
 export default forwardRef(CreditSummary);

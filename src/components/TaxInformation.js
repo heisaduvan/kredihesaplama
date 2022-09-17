@@ -1,5 +1,6 @@
 import "../App.css";
 
+//Vergi oranları gösterilir.
 const TaxInformation = () => {
   return (
     <div className="taxInformation">

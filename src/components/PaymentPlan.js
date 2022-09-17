@@ -14,10 +14,11 @@ const paymentTableHeaders = [
   "Kar Tutarı",
   "KKDF",
   "BSMV",
-];
+]; //tablo header'ları
+
 const PaymentPlan = () => {
-  const [open, setOpen] = useState(false);
-  const paymentPlanInfo = useContext(PaymentPlanContext);
+  const [open, setOpen] = useState(false); //popup open close
+  const paymentPlanInfo = useContext(PaymentPlanContext); // ödeme bilgilerini içeren context.
 
   const handleClickOpen = () => {
     setOpen(true);

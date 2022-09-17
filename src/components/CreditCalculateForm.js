@@ -1,6 +1,12 @@
-import { useState, useEffect, createContext, forwardRef, useImperativeHandle } from "react";
+import {
+  useState,
+  useEffect,
+  createContext,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { calculatePaymentPlan } from "../tools/CalculateCreditPaymentPlan";
-import "../App.css"
+import "../App.css";
 
 export const CreditContext = createContext(null);
 
@@ -11,6 +17,7 @@ const CreditCalculateForm = (props, formRef) => {
   const [period, setPeriod] = useState(7);
 
   const isNumber = (event) => {
+    //girilen değerlerin rakam olduğunu doğrular.
     if (event.which < 48 || event.which > 57) {
       event.preventDefault();
       return false;
@@ -19,34 +26,47 @@ const CreditCalculateForm = (props, formRef) => {
   };
 
   useEffect(() => {
+    //Ödeme planı hesaplandıktan sonra bir değişiklik yapılırsa tekrar hesaplama yapılmasını zorunlu kılar.
     props.handleCalculateCredit(null, null);
   }, [creditAmount, installmentCount, interestRate, period]);
 
-  const calculateSummary = () => {
-    alert("Calculate Summary");
-  };
-
-  const calculatePaymentPlan2 = () => {
-    alert("Calculate Payment Plan");
-  }
-
   useImperativeHandle(formRef, () => {
+    //aylık, haftalık, yıllık şeklinde text dönen bir method ekledim.
     return {
-      calculateSummary: () => calculateSummary(),
-      calculatePaymentPlan: () => calculatePaymentPlan2()
-    }
+      getPeriodText: (_period) => getPeriodText(_period)
+    };
   });
 
-  const handleSubmit = (e) => { 
+  const getPeriodText = (_period) => {
+     //aylık, haftalık, yıllık şeklinde text döner
+    let periods = {
+      7: "Haftalık",
+      30: "Aylık",
+      365: "Yıllık",
+    };
+
+    if (_period === null) return null;
+
+    return periods[_period];
+  };
+
+  const handleSubmit = (e) => {
+    //Ödeme planı hesaplanır, ve sonuçlar üst component'e aktarılır.
     e.preventDefault();
-    let result = calculatePaymentPlan(Number(creditAmount),Number(installmentCount), Number(interestRate), Number(period));
+    let result = calculatePaymentPlan(
+      Number(creditAmount),
+      Number(installmentCount),
+      Number(interestRate),
+      Number(period)
+    );
     props.handleCalculateCredit(result.summary, result.paymentPlan);
   };
 
   return (
     <div className="calculateForm">
       <form onSubmit={(e) => handleSubmit(e)}>
-        <div className="divForm"
+        <div
+          className="divForm"
           style={{
             display: "flex",
             alignItems: "center",
@@ -113,15 +133,11 @@ const CreditCalculateForm = (props, formRef) => {
           </label>
           <br></br>
 
-          <button
-            type="submit"
-          >
-            Hesapla
-          </button>
+          <button type="submit">Hesapla</button>
         </div>
       </form>
     </div>
   );
-}
+};
 
 export default forwardRef(CreditCalculateForm);
