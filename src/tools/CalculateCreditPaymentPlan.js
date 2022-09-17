@@ -9,10 +9,10 @@ export const calculatePaymentPlan = (
 ) => {
   let interestRateWithTax = ((1 + BSMV + KKDF) * interestRate) / 100;
   let installmentAmount =
-    creditAmount *
+    +parseFloat((creditAmount *
     ((interestRateWithTax *
       Math.pow(interestRateWithTax + 1, installmentCount)) /
-      (Math.pow(1 + interestRateWithTax, installmentCount) - 1));
+      (Math.pow(1 + interestRateWithTax, installmentCount) - 1))).toFixed(2));
 
   let bsmvAmounts = [];
   let kkdfAmounts = [];
@@ -22,12 +22,17 @@ export const calculatePaymentPlan = (
   let previousCreditAmount = creditAmount;
 
   for (let i = 1; i <= installmentCount; i++) {
-    let interest = previousCreditAmount * (interestRate / 100) * (period / 30);
-    let bsmvAmount = interest * BSMV;
-    let kkdfAmount = interest * KKDF;
-    let anapara = installmentAmount - interest - bsmvAmount - kkdfAmount;
-    let kalanAnaPara = previousCreditAmount - anapara;
+    let interest = +parseFloat((previousCreditAmount * (interestRate / 100) * (period / 30)).toFixed(2));
+    let bsmvAmount = +parseFloat((interest * BSMV).toFixed(2));
+    let kkdfAmount = +parseFloat((interest * KKDF).toFixed(2));
+    let anapara = +parseFloat((installmentAmount - interest - bsmvAmount - kkdfAmount).toFixed(2));
+    let kalanAnaPara = +parseFloat((previousCreditAmount - anapara).toFixed(2));
     previousCreditAmount = kalanAnaPara;
+
+    if(i === installmentCount){
+      anapara += kalanAnaPara;
+      previousCreditAmount = 0;
+    }
 
     bsmvAmounts.push(bsmvAmount);
     kkdfAmounts.push(kkdfAmount);
@@ -38,12 +43,12 @@ export const calculatePaymentPlan = (
 
   let creditSummary = {
     summary : {
-      toplamGeriOdeme: (installmentAmount * installmentCount).toFixed(2),
-      totalBsmv: bsmvAmounts.reduce((a, b) => a + b, 0).toFixed(2),
-      totalKkdf: kkdfAmounts.reduce((a, b) => a + b, 0).toFixed(2),
-      installmentAmount: installmentAmount.toFixed(2),
+      toplamGeriOdeme: +parseFloat((installmentAmount * installmentCount).toFixed(2)),
+      totalBsmv: +parseFloat((bsmvAmounts.reduce((a, b) => a + b, 0)).toFixed(2)),
+      totalKkdf: +parseFloat((kkdfAmounts.reduce((a, b) => a + b, 0)).toFixed(2)),
+      installmentAmount: installmentAmount,
       installmentCount: installmentCount,
-      period: Number(period)
+      period: period
     },
     paymentPlan : {
       bsmvAmounts: bsmvAmounts,
@@ -52,9 +57,9 @@ export const calculatePaymentPlan = (
       monthlyCreditAmountsWithoutTaxAndInterest:
         monthlyCreditAmountsWithoutTaxAndInterest,
       monthlyCreditAmountsAfterPayment: monthlyCreditAmountsAfterPayment,
+      installmentAmount: installmentAmount
     }
   };
 
-  console.log(period);
   return creditSummary;
 };

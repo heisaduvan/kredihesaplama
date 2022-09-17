@@ -1,10 +1,10 @@
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext, forwardRef, useImperativeHandle } from "react";
 import { calculatePaymentPlan } from "../tools/CalculateCreditPaymentPlan";
 import "../App.css"
 
 export const CreditContext = createContext(null);
 
-const CreditCalculateForm = (props) => {
+const CreditCalculateForm = (props, formRef) => {
   const [creditAmount, setCreditAmount] = useState();
   const [installmentCount, setInstallmentCount] = useState();
   const [interestRate, setInterestRate] = useState();
@@ -19,12 +19,28 @@ const CreditCalculateForm = (props) => {
   };
 
   useEffect(() => {
-    props.handleCalculateCredit(null);
+    props.handleCalculateCredit(null, null);
   }, [creditAmount, installmentCount, interestRate, period]);
+
+  const calculateSummary = () => {
+    alert("Calculate Summary");
+  };
+
+  const calculatePaymentPlan2 = () => {
+    alert("Calculate Payment Plan");
+  }
+
+  useImperativeHandle(formRef, () => {
+    return {
+      calculateSummary: () => calculateSummary(),
+      calculatePaymentPlan: () => calculatePaymentPlan2()
+    }
+  });
 
   const handleSubmit = (e) => { 
     e.preventDefault();
-    props.handleCalculateCredit(calculatePaymentPlan(creditAmount, installmentCount, interestRate, period));
+    let result = calculatePaymentPlan(Number(creditAmount),Number(installmentCount), Number(interestRate), Number(period));
+    props.handleCalculateCredit(result.summary, result.paymentPlan);
   };
 
   return (
@@ -44,6 +60,7 @@ const CreditCalculateForm = (props) => {
               type="decimal"
               value={creditAmount}
               name="creditAmount"
+              placeholder="25.000"
               onKeyPress={(e) => isNumber(e)}
               onChange={(e) => setCreditAmount(e.target.value)}
               required
@@ -57,6 +74,7 @@ const CreditCalculateForm = (props) => {
               type="number"
               value={installmentCount}
               name="installmentCount"
+              placeholder="36"
               onKeyPress={(e) => isNumber(e)}
               onChange={(e) => setInstallmentCount(e.target.value)}
               required
@@ -71,6 +89,7 @@ const CreditCalculateForm = (props) => {
               type="decimal"
               value={interestRate}
               name="interestRate"
+              placeholder="1.75"
               onChange={(e) => setInterestRate(e.target.value)}
               required
             />
@@ -105,4 +124,4 @@ const CreditCalculateForm = (props) => {
   );
 }
 
-export { CreditCalculateForm };
+export default forwardRef(CreditCalculateForm);

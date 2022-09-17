@@ -1,11 +1,13 @@
-import {useContext} from "react";
-import { CreditContext } from "../App";
+import {useContext, forwardRef, useEffect} from "react";
+import { CreditSummaryContext } from "../App";
 import "../App.css";
 
-const CreditSummary = () => {
-  const paymentPlanInfo = useContext(CreditContext);
-
-  let summary = paymentPlanInfo !== null ? paymentPlanInfo.summary : null;
+const CreditSummary = (props,ref) => {
+  const summary = useContext(CreditSummaryContext);
+  
+  const handleClick = () => {
+    ref.current.calculateSummary();
+  }
   let periodText = getPeriodText(summary);
   return (
     summary !== null && (
@@ -30,6 +32,7 @@ const CreditSummary = () => {
             </tr>
           </tbody>
         </table>
+        <button onClick={handleClick}>Tıkla</button>
       </div>
     )
   );
@@ -46,4 +49,4 @@ const getPeriodText = (summary) => {
 
   return periods[summary.period];
 };
-export { CreditSummary };
+export default forwardRef(CreditSummary);

@@ -4,11 +4,20 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { CreditContext } from "../App";
+import { PaymentPlanContext } from "../App";
 
+const paymentTableHeaders = [
+  "Taksit No",
+  "Taksit Tutarı",
+  "Anapara",
+  "Kalan Anapara",
+  "Kar Tutarı",
+  "KKDF",
+  "BSMV",
+];
 const PaymentPlan = () => {
   const [open, setOpen] = useState(false);
-  const paymentPlanInfo = useContext(CreditContext);
+  const paymentPlanInfo = useContext(PaymentPlanContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,50 +45,47 @@ const PaymentPlan = () => {
           <DialogContent dividers>
             <table>
               <thead>
-                <th>Taksit No</th>
-                <th>Taksit Tutarı</th>
-                <th>Anapara</th>
-                <th>Kalan Anapara</th>
-                <th>Kar Tutarı</th>
-                <th>KKDF</th>
-                <th>BSMV</th>
+                <tr key={Math.random()}>
+                  {paymentTableHeaders.map((header, index) => {
+                    return <th key={index}>{header}</th>;
+                  })}
+                </tr>
               </thead>
               <tbody>
-                {paymentPlanInfo.paymentPlan.bsmvAmounts.map(
-                  (bsmvAmount, index) => {
-                    return (
-                      <>
-                        <tr>
-                          <td>{index + 1}</td>
-                          <td>{paymentPlanInfo.summary.installmentAmount}</td>
-                          <td>
-                            {
-                              paymentPlanInfo.paymentPlan
-                                .monthlyCreditAmountsWithoutTaxAndInterest[
-                                index
-                              ]
-                            }
-                          </td>
-                          <td>
-                            {
-                              paymentPlanInfo.paymentPlan
-                                .monthlyCreditAmountsAfterPayment[index]
-                            }
-                          </td>
-                          <td>
-                            {paymentPlanInfo.paymentPlan.interestAmounts[index]}
-                          </td>
-                          <td>
-                            {paymentPlanInfo.paymentPlan.kkdfAmounts[index]}
-                          </td>
-                          <td>
-                            {paymentPlanInfo.paymentPlan.bsmvAmounts[index]}
-                          </td>
-                        </tr>
-                      </>
-                    );
-                  }
-                )}
+                {paymentPlanInfo.bsmvAmounts.map((bsmvAmount, index) => {
+                  return (
+                    <>
+                      <tr key={index}>
+                        <td key={Math.random()}>{index + 1}</td>
+                        <td key={Math.random()}>
+                          {paymentPlanInfo.installmentAmount}
+                        </td>
+                        <td key={Math.random()}>
+                          {
+                            paymentPlanInfo
+                              .monthlyCreditAmountsWithoutTaxAndInterest[index]
+                          }
+                        </td>
+                        <td key={Math.random()}>
+                          {
+                            paymentPlanInfo.monthlyCreditAmountsAfterPayment[
+                              index
+                            ]
+                          }
+                        </td>
+                        <td key={Math.random()}>
+                          {paymentPlanInfo.interestAmounts[index]}
+                        </td>
+                        <td key={Math.random()}>
+                          {paymentPlanInfo.kkdfAmounts[index]}
+                        </td>
+                        <td key={Math.random()}>
+                          {paymentPlanInfo.bsmvAmounts[index]}
+                        </td>
+                      </tr>
+                    </>
+                  );
+                })}
               </tbody>
             </table>
           </DialogContent>
