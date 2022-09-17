@@ -1,5 +1,11 @@
-const TaxInformation = () => {
-    return <><p>KKDF %15, BSMV %10 olarak hesaplama yapılacaktır.</p></>
-}
+import "../App.css";
 
-export {TaxInformation}
+const TaxInformation = () => {
+  return (
+    <div className="taxInformation">
+      <p>KKDF %15, BSMV %10 olarak hesaplama yapılacaktır.</p>
+    </div>
+  );
+};
+
+export { TaxInformation };
